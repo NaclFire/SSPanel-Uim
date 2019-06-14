@@ -285,6 +285,13 @@ CREATE TABLE IF NOT EXISTS `user` (
   `remark` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- 转存表中的数据 `user`
+--
+
+INSERT INTO `user` (`id`, `user_name`, `email`, `pass`, `passwd`, `t`, `u`, `d`, `plan`, `transfer_enable`, `port`, `switch`, `enable`, `type`, `last_get_gift_time`, `last_check_in_time`, `last_rest_pass_time`, `reg_date`, `invite_num`, `money`, `ref_by`, `expire_time`, `method`, `is_email_verify`, `reg_ip`, `node_speedlimit`, `node_connector`, `is_admin`, `im_type`, `im_value`, `last_day_t`, `sendDailyMail`, `class`, `class_expire`, `expire_in`, `theme`, `ga_token`, `ga_enable`, `pac`, `remark`) VALUES
+(1, 'admin', 'nacl0312@163.com', '390b51db8a375abf1e28bfc4895fbe19', '2J40xW', 0, 0, 0, 'A', 1073741824, 1025, 1, 1, 1, 0, 0, 0, '2017-05-26 20:04:42', 0, '0.00', 0, 0, 'aes-256-cfb', 0, '127.0.0.1', '0.00', 0, 1, 1, '', 0, 1, 0, '1989-06-04 00:05:00', '2291-03-10 20:04:42', 'cute', '2TFGSYHQ3FJLZSWX', 0, NULL, NULL);
+
 -- --------------------------------------------------------
 
 --
