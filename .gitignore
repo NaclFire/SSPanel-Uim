@@ -4,6 +4,7 @@
 */.DS_Store
 .DS_Store
 composer.lock
+.php_cs.cache
 .env
 vendor
 
@@ -15,6 +16,7 @@ index.html
 
 config/.config.php
 config/.config.php.bak
+config/appprofile.php
 
 public/ssr-download/
 public/images/*.*
@@ -33,3 +35,5 @@ storage/*.*
 public/.user.ini
 
 resources/views/material/analytics.tpl
+
+test/tpl_files.txt

@@ -9,7 +9,6 @@
     <div class="container">
         <section class="content-inner margin-top-no">
             <div class="ui-card-wrap">
-
                 <div class="col-lg-12 col-md-12">
                     <div class="card">
                         <div class="card-main">
@@ -34,19 +33,13 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
-
                     {include file='dialog.tpl'}
-
                 </div>
-
-
             </div>
         </section>
     </div>
 </main>
-
 
 {include file='user/footer.tpl'}

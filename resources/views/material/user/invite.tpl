@@ -9,29 +9,25 @@
     <div class="container">
         <section class="content-inner margin-top-no">
             <div class="row">
-
-                <div class="col-xx-12">
+                <div class="col-lg-6 col-md-6">
                     <div class="card margin-bottom-no">
                         <div class="card-main">
                             <div class="card-inner">
                                 <div class="card-inner">
                                     <p class="card-heading">说明</p>
                                     <p>您每邀请1位用户注册：</p>
-                                    <p>您会获得<code>{$config["invite_gift"]} G</code>流量奖励。</p>
-                                    <p>对方将获得<code>{$config["invite_get_money"]}</code>元奖励作为初始资金。</p>
-                                    <p>对方充值时您还会获得对方充值金额的 <code>{$config["code_payback"]} %</code> 的返利。</p>
+                                    <p>您会获得<code>{$config['invite_gift']} G</code>流量奖励。</p>
+                                    <p>对方将获得<code>{$config['invite_get_money']}</code>元奖励作为初始资金。</p>
+                                    <p>对方充值时您还会获得对方充值金额的 <code>{$config['code_payback']} %</code> 的返利。</p>
                                     <p class="card-heading">已获得返利：<code>{$paybacks_sum}</code> 元</p>
                                 </div>
-
                             </div>
                         </div>
                     </div>
                 </div>
-
                 {if $user->class!=0}
-
                     {if $user->invite_num!=-1}
-                        <div class="col-xx-12">
+                        <div class="col-lg-6 col-md-6">
                             <div class="card margin-bottom-no">
                                 <div class="card-main">
                                     <div class="card-inner margin-bottom-no">
@@ -49,9 +45,9 @@
                                                 <input type="text"
                                                        class="input form-control form-control-monospace cust-link"
                                                        name="input1" readonly=""
-                                                       value="{$config["baseUrl"]}/auth/register?code={$code->code}">
+                                                       value="{$config['baseUrl']}/auth/register?code={$code->code}">
                                                 <button class="copy-text btn btn-subscription" type="button"
-                                                        data-clipboard-text="{$config["baseUrl"]}/auth/register?code={$code->code}">
+                                                        data-clipboard-text="{$config['baseUrl']}/auth/register?code={$code->code}">
                                                     点击复制
                                                 </button>
                                             </div>
@@ -59,9 +55,9 @@
                                                 <input type="text"
                                                        class="input form-control form-control-monospace cust-link"
                                                        name="input2" readonly=""
-                                                       value="{$config["baseUrl"]}/#/auth/register?code={$code->code}">
+                                                       value="{$config['baseUrl']}/#/auth/register?code={$code->code}">
                                                 <button class="copy-text btn btn-subscription" type="button"
-                                                        data-clipboard-text="{$config["baseUrl"]}/#/auth/register?code={$code->code}">
+                                                        data-clipboard-text="{$config['baseUrl']}/#/auth/register?code={$code->code}">
                                                     点击复制
                                                 </button>
                                             </div>
@@ -71,7 +67,7 @@
                             </div>
                         </div>
                         {if $config['custom_invite_price']>=0}
-                            <div class="col-xx-12 {if $config['invite_price']>=0}col-lg-6{/if}">
+                            <div class="col-lg-6 col-md-6">
                                 <div class="card margin-bottom-no">
                                     <div class="card-main">
                                         <div class="card-inner margin-bottom-no">
@@ -84,7 +80,7 @@
                                                                 class="icon">check</span>&nbsp;
                                                     </button>
                                                 </div>
-                                                <p>例:输入<code>vip</code>则链接变为<code>{$config["baseUrl"]}
+                                                <p>例:输入<code>vip</code>则链接变为<code>{$config['baseUrl']}
                                                         /auth/register?code=vip</code></p>
                                                 <div class="form-group form-group-label">
                                                     <label class="floating-label"
@@ -99,9 +95,8 @@
                             </div>
                         {/if}
                     {/if}
-
                     {if $config['invite_price']>=0}
-                        <div class="col-xx-12 {if $config['custom_invite_price']>=0}col-lg-6{/if}">
+                        <div class="col-lg-6 col-md-6">
                             <div class="card margin-bottom-no">
                                 <div class="card-main">
                                     <div class="card-inner">
@@ -125,7 +120,6 @@
                             </div>
                         </div>
                     {/if}
-
                 {else}
                     <div class="col-xx-12">
                         <div class="card margin-bottom-no">
@@ -144,37 +138,37 @@
                             <div class="card-inner">
                                 <div class="card-table">
                                     <div class="table-responsive bgc-fix table-user">
-                                        {$paybacks->render()}
+                                        {$render}
                                         <table class="table">
                                             <tr>
-
-                                                <!--   <th>ID</th> -->
                                                 <th>ID</th>
                                                 <th>被邀请用户ID</th>
                                                 <th>获得返利</th>
+                                                <th>返利時間</th>
                                             </tr>
                                             {foreach $paybacks as $payback}
                                                 <tr>
-
-                                                    <!--       <td>#{$payback->id}</td> -->
                                                     <td>{$payback->id}</td>
-                                                    <td>{$payback->userid}</td>
+                                                    {if $payback->user()!=null}
+                                                        <td>{$payback->user()->user_name}
+                                                        </td>
+                                                    {else}
+                                                        <td>已注销
+                                                        </td>
+                                                    {/if}
                                                     <td>{$payback->ref_get} 元</td>
-
+                                                    <td class='payback-datetime'>{$payback->datetime}</td>
                                                 </tr>
                                             {/foreach}
                                         </table>
-                                        {$paybacks->render()}
+                                        {$render}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
-
                 {include file='dialog.tpl'}
-
             </div>
         </section>
     </div>
@@ -184,92 +178,101 @@
 
 <script>
     $(function () {
-        new Clipboard('.copy-text');
+        new ClipboardJS('.copy-text');
     });
-
     $(".copy-text").click(function () {
         $("#result").modal();
-        $("#msg").html("已复制到您的剪贴板，请您继续接下来的操作。");
+        $$.getElementById('msg').innerHTML = '已复制到您的剪贴板，请您继续接下来的操作。';
     });
-
     $(document).ready(function () {
         $("#invite").click(function () {
             $.ajax({
                 type: "POST",
                 url: "/user/invite",
                 dataType: "json",
-                success: function (data) {
+                success: (data) => {
                     window.location.reload();
                 },
-                error: function (jqXHR) {
+                error: (jqXHR) => {
                     $("#result").modal();
-                    $("#msg").html("发生错误：" + jqXHR.status);
+                    $$.getElementById('msg').innerHTML = `发生错误：${
+                            jqXHR.status
+                            }`;
                 }
             })
         })
     })
 </script>
-
 <script>
-
+    $(".payback-datetime").each(function() {
+        var $this = $(this);
+        $this.text(() => {
+            var unix_timestamp = parseFloat($this.text());
+            var date = new Date(unix_timestamp*1000).toLocaleDateString("zh-CN");
+            var time = new Date(unix_timestamp).toLocaleTimeString("zh-CN");
+            var formattedTime = date + ' ' + time;
+            return formattedTime;
+        });
+    });
+</script>
+<script>
     $("#buy-invite").click(function () {
         $.ajax({
             type: "POST",
             url: "/user/buy_invite",
             dataType: "json",
             data: {
-                num: $("#buy-invite-num").val(),
+                num: $$getValue('buy-invite-num')
             },
-            success: function (data) {
+            success: (data) => {
                 if (data.ret) {
                     $("#result").modal();
-                    $("#msg").html(data.msg);
+                    $$.getElementById('msg').innerHTML = data.msg;
                     window.setTimeout("location.href='/user/invite'", {$config['jump_delay']});
                 } else {
                     $("#result").modal();
-                    $("#msg").html(data.msg);
+                    $$.getElementById('msg').innerHTML = data.msg;
                 }
             },
-            error: function (jqXHR) {
+            error: (jqXHR) => {
                 $("#result").modal();
-                $("#msg").html(data.msg + "     出现了一些错误。");
+                $$.getElementById('msg').innerHTML = `${
+                        data.msg
+                        } 出现了一些错误`;
             }
         })
     });
-
     $("#custom-invite-confirm").click(function () {
         $.ajax({
             type: "POST",
             url: "/user/custom_invite",
             dataType: "json",
             data: {
-                customcode: $("#custom-invite-link").val(),
+                customcode: $$getValue('custom-invite-link'),
             },
-            success: function (data) {
+            success: (data) => {
                 if (data.ret) {
                     $("#result").modal();
-                    $("#msg").html(data.msg);
+                    $$.getElementById('msg').innerHTML = data.msg;
                     window.setTimeout("location.href='/user/invite'", {$config['jump_delay']});
                 } else {
                     $("#result").modal();
-                    $("#msg").html(data.msg);
+                    $$.getElementById('msg').innerHTML = data.msg;
                 }
             },
-            error: function (jqXHR) {
+            error: (jqXHR) => {
                 $("#result").modal();
-                $("#msg").html(data.msg + "     出现了一些错误。");
+                $$.getElementById('msg').innerHTML = `${
+                        data.msg
+                        } 出现了一些错误`;
             }
         })
     });
-
 </script>
-
 <script>
-
     $(".reset-link").click(function () {
         $("#result").modal();
-        $("#msg").html("已重置您的邀请链接，复制您的邀请链接发送给其他人！");
+        $$.getElementById('msg').innerHTML = '已重置您的邀请链接，复制您的邀请链接发送给其他人！';
         window.setTimeout("location.href='/user/inviteurl_reset'", {$config['jump_delay']});
     });
-
 </script>

@@ -9,7 +9,7 @@
                         <div>首 页</div>
                     </a>
                     <div class="auth-logo">
-                        <img src="/images/authlogo.jpg" alt="">
+                        <img src="/images/authlogo.jpg">
                     </div>
                     <a href="/auth/login" class="boardtop-right">
                         <div>登 录</div>
@@ -28,7 +28,7 @@
                         <div class="auth-row">
                             <div class="form-group-label auth-row">
                                 <label class="floating-label" for="email">邮箱(唯一凭证请认真对待)</label>
-                                <input class="form-control maxwidth-auth" id="email" type="text" maxlength="32">
+                                <input class="form-control maxwidth-auth" id="email" type="email" maxlength="32" inputmode="email" autocomplete="username">
                             </div>
                         </div>
                     </div>
@@ -36,7 +36,8 @@
                         <div class="auth-row">
                             <div class="form-group-label auth-row">
                                 <label class="floating-label" for="passwd">密码</label>
-                                <input class="form-control maxwidth-auth" id="passwd" type="password">
+                                <input class="form-control maxwidth-auth" id="passwd" type="password" autocomplete="new-password">
+                                <p id="passwd-strong" style="text-align: left; margin: 3px; font-size: 80%"></p>
                             </div>
                         </div>
                     </div>
@@ -44,7 +45,7 @@
                         <div class="auth-row">
                             <div class="form-group form-group-label">
                                 <label class="floating-label" for="repasswd">重复密码</label>
-                                <input class="form-control maxwidth-auth" id="repasswd" type="password">
+                                <input class="form-control maxwidth-auth" id="repasswd" type="password" autocomplete="new-password">
                             </div>
                         </div>
                     </div>
@@ -86,13 +87,13 @@
                             </div>
                         </div>
                     {/if}
-                    {if $enable_email_verify == 'true'}
+                    {if $enable_email_verify == true}
                         <div class="rowtocol">
                             <div class="rowtocol">
                                 <div class="form-group form-group-label">
                                     <label class="floating-label" for="email_code">邮箱验证码</label>
                                     <input class="form-control maxwidth-auth" id="email_code" type="text"
-                                           onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;">
+                                           onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;" autocomplete="one-time-code">
                                 </div>
                             </div>
                             <div class="rowtocol">
@@ -132,7 +133,7 @@
                     </div>
                 {else}
                     <div class="form-group">
-                        <p>{$config["appName"]} 已停止新用户注册，请联系网站管理员</p>
+                        <p>{$config['appName']} 已停止新用户注册，请联系网站管理员</p>
                     </div>
                 {/if}
                 <div class="auth-bottom auth-row auth-reg">
@@ -140,7 +141,6 @@
 
                         <p>注册即代表同意<a href="/tos">服务条款</a>，以及保证所录入信息的真实性，如有不实信息会导致账号被删除。</p>
 
-                        <!-- <span>Telegram</span><button class="btn" id="calltgauth"><i class="icon icon-lg">near_me</i></button><span>快捷登录</span> -->
                     </div>
                 </div>
             </div>
@@ -150,6 +150,7 @@
 
             </div>
         </div>
+        {include file='./telegram_modal.tpl'}
     </div>
 </div>
 
@@ -203,12 +204,65 @@
 
 {include file='footer.tpl'}
 
+<script>
+const checkStrong = (sValue) => {
+    let modes = 0;
+    if (sValue.length < 7) return modes;
+    if (/\d/.test(sValue)) modes++;
+    if (/[a-z]/.test(sValue)) modes++;
+    if (/[A-Z]/.test(sValue)) modes++;
+    if (/\W/.test(sValue)) modes++;
+
+    switch (modes) {
+        case 1:
+            return 1;
+            break;
+        case 2:
+            return 2;
+        case 3:
+        case 4:
+            return sValue.length < 12 ? 3 : 4
+            break;
+    }
+}
+
+const showStrong = () => {
+    const password = document.getElementById('passwd').value;
+    const $passwordStrongEl = document.getElementById('passwd-strong');
+    const strong = checkStrong(password);
+    if (strong = 0) {
+        $passwordStrongEl.innerHTML = '需大于 8 位；推荐使用包含大小写字母、数字、符号的密码';
+    } else if (strong = 1) {
+        $passwordStrongEl.innerHTML = '你的密码强度为： <span style="color: red; font-weight: bold">非常弱</span>';
+    } else if (strong = 2) {
+        $passwordStrongEl.innerHTML = '你的密码强度为： <span style="color: red; font-weight: bold">弱</span>';
+    } else if (strong = 3) {
+        $passwordStrongEl.innerHTML = '你的密码强度为： <span style="color: yellow; font-weight: bold">中等</span>';
+    } else if (strong = 4) {
+        $passwordStrongEl.innerHTML = '你的密码强度为： <span style="color: green; font-weight: bold">强</span>';
+    }
+}
+
+document.getElementById('passwd').addEventListener('input', checkStrong);
+</script>
+
+{literal}
+    <script>
+        let calltgbtn = document.querySelector('#calltgauth');
+        let tgboard = document.querySelector('.card.auth-tg.cust-model');
+        if (calltgbtn && tgboard) {
+            custModal(calltgbtn, tgboard);
+        }
+    </script>
+{/literal}
+
 {if $config['register_mode']!='close'}
     <script>
         $(document).ready(function () {
             function register() {
-                code = $("#code").val();
-                {if $config['register_mode'] != 'invite'}
+                {if $config['register_mode'] == 'invite'}
+                code = $$getValue('code');
+                {else}
                 code = 0;
                 if ((getCookie('code')) != '') {
                     code = getCookie('code');
@@ -221,28 +275,32 @@
                     url: "/auth/register",
                     dataType: "json",
                     data: {
-                        email: $("#email").val(),
-                        name: $("#name").val(),
-                        passwd: $("#passwd").val(),
-                        repasswd: $("#repasswd").val(),
-                        wechat: $("#wechat").val(),{if $recaptcha_sitekey != null}
-                        recaptcha: grecaptcha.getResponse(),{/if}
-                        imtype: $("#imtype").val(),
-                        code: code{if $enable_email_verify == 'true'},
-                        emailcode: $("#email_code").val(){/if}{if $geetest_html != null},
+                        email: $$getValue('email'),
+                        name: $$getValue('name'),
+                        passwd: $$getValue('passwd'),
+                        repasswd: $$getValue('repasswd'),
+                        wechat: $$getValue('wechat'),
+
+                        {if $recaptcha_sitekey != null}
+                        recaptcha: grecaptcha.getResponse(),
+                        {/if}
+
+                        imtype: $$getValue('imtype'),
+                        code{if $enable_email_verify == true},
+                        emailcode: $$getValue('email_code'){/if}{if $geetest_html != null},
                         geetest_challenge: validate.geetest_challenge,
                         geetest_validate: validate.geetest_validate,
                         geetest_seccode: validate.geetest_seccode
                         {/if}
                     },
-                    success: function (data) {
+                    success: (data) => {
                         if (data.ret == 1) {
                             $("#result").modal();
-                            $("#msg").html(data.msg);
-                            window.setTimeout("location.href='/auth/login'", {$config['jump_delay']});
+                            $$.getElementById('msg').innerHTML = data.msg;
+                            window.setTimeout("location.href='/user'", {$config['jump_delay']});
                         } else {
                             $("#result").modal();
-                            $("#msg").html(data.msg);
+                            $$.getElementById('msg').innerHTML = data.msg;
                             setCookie('code', '', 0);
                             $("#code").val(getCookie('code'));
                             document.getElementById("tos").disabled = false;
@@ -251,10 +309,12 @@
                             {/if}
                         }
                     },
-                    error: function (jqXHR) {
+                    error: (jqXHR) => {
                         $("#msg-error").hide(10);
                         $("#msg-error").show(100);
-                        $("#msg-error-p").html("发生错误：" + jqXHR.status);
+                        $$.getElementById('msg-error-p').innerHTML = `发生错误：${
+                                jqXHR.status
+                                }`;
                         document.getElementById("tos").disabled = false;
                         {if $geetest_html != null}
                         captcha.refresh();
@@ -288,15 +348,9 @@
 
             $("#tos").click(function () {
                 {if $geetest_html != null}
-                if (typeof validate == 'undefined') {
+                if (typeof validate === 'undefined' || !validate) {
                     $("#result").modal();
-                    $("#msg").html("请滑动验证码来完成验证。");
-                    return;
-                }
-
-                if (!validate) {
-                    $("#result").modal();
-                    $("#msg").html("请滑动验证码来完成验证。");
+                    $$.getElementById('msg').innerHTML = '请滑动验证码来完成验证'
                     return;
                 }
 
@@ -307,7 +361,7 @@
     </script>
 {/if}
 
-{if $enable_email_verify == 'true'}
+{if $enable_email_verify == true}
     <script>
         var wait = 60;
 
@@ -337,27 +391,31 @@
                     url: "send",
                     dataType: "json",
                     data: {
-                        email: $("#email").val()
+                        email: $$getValue('email')
                     },
-                    success: function (data) {
+                    success: (data) => {
                         if (data.ret) {
                             $("#result").modal();
-                            $("#msg").html(data.msg);
+                            $$.getElementById('msg').innerHTML = data.msg;
 
                         } else {
                             $("#result").modal();
-                            $("#msg").html(data.msg);
+                            $$.getElementById('msg').innerHTML = data.msg;
                         }
                     },
-                    error: function (jqXHR) {
+                    error: (jqXHR) => {
                         $("#result").modal();
-                        $("#msg").html(data.msg + "     出现了一些错误。");
+                        $$.getElementById('msg').innerHTML = `${
+                                data.msg
+                                } 出现了一些错误`;
                     }
                 })
             })
         })
     </script>
 {/if}
+
+{include file='./telegram.tpl'}
 
 {if $geetest_html != null}
     <script>

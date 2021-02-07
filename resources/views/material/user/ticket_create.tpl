@@ -1,5 +1,5 @@
 {include file='user/main.tpl'}
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/css/editormd.min.css"/>
 
 <main class="content">
     <div class="content-header ui-content-header">
@@ -18,30 +18,21 @@
                                 <label class="floating-label" for="title">标题</label>
                                 <input class="form-control maxwidth-edit" id="title" type="text">
                             </div>
-
-
                         </div>
                     </div>
                 </div>
-
                 <div class="card">
                     <div class="card-main">
                         <div class="card-inner">
                             <div class="form-group form-group-label">
                                 <label class="floating-label" for="content">内容</label>
-                                <link rel="stylesheet"
-                                      href="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/css/editormd.min.css"/>
                                 <div id="editormd">
                                     <textarea style="display:none;" id="content"></textarea>
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
                 </div>
-
-
                 <div class="card">
                     <div class="card-main">
                         <div class="card-inner">
@@ -56,26 +47,20 @@
                         </div>
                     </div>
                 </div>
-
                 {include file='dialog.tpl'}
-
-
+            </section>
         </div>
-
-
     </div>
 </main>
 
-
 {include file='user/footer.tpl'}
-
 
 <script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/editormd.min.js"></script>
 <script>
     $(document).ready(function () {
         function submit() {
             $("#result").modal();
-            $("#msg").html("正在提交。");
+            $$.getElementById('msg').innerHTML = '正在提交付...'
             $.ajax({
                 type: "POST",
                 url: "/user/ticket",
@@ -83,31 +68,31 @@
                 data: {
                     content: editor.getHTML(),
                     markdown: $('.editormd-markdown-textarea').val(),
-                    title: $("#title").val()
+                    title: $$getValue('title')
                 },
-                success: function (data) {
+                success: (data) => {
                     if (data.ret) {
                         $("#result").modal();
-                        $("#msg").html(data.msg);
+                        $$.getElementById('msg').innerHTML = data.msg;
                         window.setTimeout("location.href='/user/ticket'", {$config['jump_delay']});
                     } else {
                         $("#result").modal();
-                        $("#msg").html(data.msg);
+                        $$.getElementById('msg').innerHTML = data.msg;
                     }
                 },
-                error: function (jqXHR) {
+                error: (jqXHR) => {
                     $("#msg-error").hide(10);
                     $("#msg-error").show(100);
-                    $("#msg-error-p").html("发生错误：" + jqXHR.status);
+                    $$.getElementById('msg-error-p').innerHTML = `发生错误：${
+                            jqXHR.status
+                            }`;
                 }
             });
         }
-
         $("#submit").click(function () {
             submit();
         });
     });
-
     $(function () {
         editor = editormd("editormd", {
             path: "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/", // Autoload modules mode, codemirror, marked... dependents libs path
@@ -115,7 +100,6 @@
             saveHTMLToTextarea: true,
             emoji: true
         });
-
         /*
         // or
         var editor = editormd({
@@ -125,10 +109,3 @@
         */
     });
 </script>
-
-
-
-
-
-
-

@@ -1,6 +1,5 @@
 {include file='user/main.tpl'}
 
-
 <main class="content">
     <div class="content-header ui-content-header">
         <div class="container">
@@ -24,14 +23,13 @@
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="source_node">
                                         {foreach $source_nodes as $source_node}
-                                            <li><a href="#" class="dropdown-option" onclick="return false;"
+                                            <li>
+                                                <a href="#" class="dropdown-option" onclick="return false;"
                                                    val="{$source_node->id}" data="source_node">{$source_node->name}</a>
                                             </li>
                                         {/foreach}
                                     </ul>
                                 </div>
-
-
                                 <div class="form-group form-group-label control-highlight-custom dropdown">
                                     <label class="floating-label" for="dist_node">目标节点</label>
                                     <button id="dist_node" class="form-control maxwidth-edit" name="dist_node"
@@ -49,7 +47,6 @@
                                         {/foreach}
                                     </ul>
                                 </div>
-
                                 <div class="form-group form-group-label control-highlight-custom dropdown">
                                     <label class="floating-label" for="port">端口</label>
                                     <button id="port" class="form-control maxwidth-edit" name="port"
@@ -65,24 +62,17 @@
                                         {/foreach}
                                     </ul>
                                 </div>
-
-
                                 <div class="form-group form-group-label">
                                     <label class="floating-label" for="priority">优先级</label>
                                     <input class="form-control maxwidth-edit" id="priority" name="priority" type="text"
                                            value="{$rule->priority}">
                                 </div>
-
-
                             </div>
                         </div>
                     </div>
-
-
                     <div class="card">
                         <div class="card-main">
                             <div class="card-inner">
-
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-md-10 col-md-push-1">
@@ -97,61 +87,51 @@
                 </form>
                 {include file='dialog.tpl'}
                 <section>
-
         </div>
-
-
     </div>
 </main>
 
-
 {include file='user/footer.tpl'}
-
 
 {literal}
 <script>
-
     $('#main_form').validate({
         rules: {
             priority: {required: true}
         },
-
-
-        submitHandler: function () {
-
-
+        submitHandler: () => {
             $.ajax({
                 {/literal}
-                type: "PUT",
-                url: "/user/relay/{$rule->id}",
-                dataType: "json",
+                type: 'PUT',
+                url: '/user/relay/{$rule->id}',
+                dataType: 'json',
                 data: {
-                    source_node: $("#source_node").val(),
-                    dist_node: $("#dist_node").val(),
-                    port: $("#port").val(),
-                    priority: $("#priority").val()
+                    source_node: $$getValue('source_node'),
+                    dist_node: $$getValue('dist_node'),
+                    port: $$getValue('port'),
+                    priority: $$getValue('priority')
                     {literal}
                 },
-                success: function (data) {
+                success: (data) => {
                     if (data.ret) {
                         $("#result").modal();
-                        $("#msg").html(data.msg);
+                        $$.getElementById('msg').innerHTML = data.msg;
                         {/literal}
                         window.setTimeout("location.href=top.document.referrer", {$config['jump_delay']});
                         {literal}
                     } else {
                         $("#result").modal();
-                        $("#msg").html(data.msg);
+                        $$.getElementById('msg').innerHTML = data.msg;
                     }
                 },
-                error: function (jqXHR) {
+                error: (jqXHR) => {
                     $("#result").modal();
-                    $("#msg").html(data.msg + "  发生错误了。");
+                    $$.getElementById('msg').innerHTML = `${
+                            data.msg
+                            } 发生错误了`;
                 }
             });
         }
     });
-
 </script>
-
 {/literal}
